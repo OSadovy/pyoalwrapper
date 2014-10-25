@@ -58,7 +58,7 @@ cdef class InitParams:
         def __get__(self): return self.params.mlStreamingBufferCount
         def __set__(self, int v): self.params.mlStreamingBufferCount = v
 
-    property use_e_f_x:
+    property use_efx:
         def __get__(self): return self.params.mbUseEFX
         def __set__(self, bool v): self.params.mbUseEFX = v
 
@@ -289,6 +289,40 @@ cdef class Source:
 
     def get_total_time(self):
         return OAL_Source_GetTotalTime(self.handle)
+
+    def set_cone_outer_gain(self, float gain):
+        OAL_Source_SetConeOuterGain(self.handle, gain)
+
+    def _set_cone_inner_angle(self, float angle):
+        OAL_Source_setConeInnerAngle(self.handle, angle)
+
+    def _set_cone_outer_angle(self, float angle):
+        OAL_Source_setConeOuterAngle(self.handle, angle)
+
+    def set_direction(self, float x, float y, float z):
+        cdef float[3] dir
+        dir[0] = x
+        dir[1] = y
+        dir[2] = z
+        OAL_Source_SetDirection(self.handle, dir)
+
+    def set_cone_outer_gain_hf(self, float gain):
+        OAL_Source_SetConeOuterGainHF(self.handle, gain)
+
+    def set_air_absorption_factor(self, float factor):
+        OAL_Source_SetAirAbsorptionFactor(self.handle, factor)
+
+    def set_room_rolloff_factor(self, float factor):
+        OAL_Source_SetRoomRolloffFactor(self.handle, factor)
+
+    def set_direct_filter_gain_hf_auto(self, bool auto):
+        OAL_Source_SetDirectFilterGainHFAuto(self.handle, auto)
+
+    def set_aux_send_filter_gain_auto(self, bool auto):
+        OAL_Source_SetAuxSendFilterGainAuto(self.handle, auto)
+
+    def set_aux_send_filter_gain_hf_auto(self, bool auto):
+        OAL_Source_SetAuxSendFilterGainHFAuto(self.handle, auto)
 
 
 def set_listener_gain(float gain):

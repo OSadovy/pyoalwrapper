@@ -120,6 +120,10 @@ cdef extern from "OALWrapper/OAL_Playback.h":
     void OAL_Source_SetMinMaxDistance(const int alSource, const float afMin, const float afMax)
     void OAL_Source_SetPositionRelative(const int alSource, const bool abRelative)
     void OAL_Source_SetPriority(const int alSource, const unsigned int alPriority)
+    void OAL_Source_SetConeOuterGain ( const int alSource, const float afGain )
+    void OAL_Source_setConeInnerAngle ( const int alSource, const float afAngle )
+    void OAL_Source_setConeOuterAngle ( const int alSource, const float afAngle )
+    void OAL_Source_SetDirection ( const int alSource, const float* apDir )
 
     unsigned int OAL_Source_GetPriority(const int alSource)
     float OAL_Source_GetPitch(const int alSource)
@@ -142,3 +146,11 @@ cdef extern from "OALWrapper/OAL_Device.h":
         void SetListenerVelocity (const float* apVel )
         void SetListenerOrientation (const float* apForward, const float* apUp)
 
+
+cdef extern from "OALWrapper/OAL_EFX.h":
+    void OAL_Source_SetConeOuterGainHF ( const int alSourceHandle, const float afGain )
+    void OAL_Source_SetAirAbsorptionFactor ( const int alSourceHandle, const float afFactor )
+    void OAL_Source_SetRoomRolloffFactor ( const int alSourceHandle, const float afFactor )
+    void OAL_Source_SetDirectFilterGainHFAuto ( const int alSourceHandle, bool abAuto)
+    void OAL_Source_SetAuxSendFilterGainAuto ( const int alSourceHandle, bool abAuto)
+    void OAL_Source_SetAuxSendFilterGainHFAuto ( const int alSourceHandle, bool abAuto)

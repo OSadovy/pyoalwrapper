@@ -85,10 +85,16 @@ def parse_func_def(s):
     return l
 
 inp = """
-void SetListenerGain ( const float afGain );
-	void SetListenerPosition (const float* apPos );
-	void SetListenerVelocity (const float* apVel );
-	void SetListenerOrientation (const float* apForward, const float* apUp);
+    void OAL_Source_SetConeOuterGain ( const int alSource, const float afGain )
+    void OAL_Source_setConeInnerAngle ( const int alSource, const float afAngle )
+    void OAL_Source_setConeOuterAngle ( const int alSource, const float afAngle )
+    void OAL_Source_SetDirection ( const int alSource, const float* apDir )
+    void OAL_Source_SetConeOuterGainHF ( const int alSourceHandle, const float afGain )
+    void OAL_Source_SetAirAbsorptionFactor ( const int alSourceHandle, const float afFactor )
+    void OAL_Source_SetRoomRolloffFactor ( const int alSourceHandle, const float afFactor )
+    void OAL_Source_SetDirectFilterGainHFAuto ( const int alSourceHandle, bool abAuto)
+    void OAL_Source_SetAuxSendFilterGainAuto ( const int alSourceHandle, bool abAuto)
+    void OAL_Source_SetAuxSendFilterGainHFAuto ( const int alSourceHandle, bool abAuto)
 """
 known_abbrews = ('EFX', 'OAL')
 
@@ -120,7 +126,7 @@ def gen_funcs(inp):
 def gen_methods(inp):
     t = Template(method_template)
     for return_type, orig_name, args in parse_func_def(inp):
-        if args[0][-1] == 'alSource':
+        if args[0][-1].startswith('alSource'):
             del args[0]
         for i, arg in enumerate(args):
             arg[-1] = pythonize_name(arg[-1][2:], [])
@@ -135,4 +141,4 @@ def gen_methods(inp):
         print t.render(ctx)
 
 if __name__ == '__main__':
-    gen_funcs(inp)
+    gen_methods(inp)
