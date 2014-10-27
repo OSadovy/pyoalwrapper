@@ -1,5 +1,6 @@
 #distutils: language = c++
 
+cimport cython
 from pyoalwrapper cimport *
 
 
@@ -138,6 +139,7 @@ cdef class Sample:
     def __dealloc__(self):
         if self.inst is not NULL:
             OAL_Sample_Unload(self.inst)
+            self.inst = NULL
 
     @classmethod
     def load(cls,  asFilename, eOAL_SampleFormat format=eOAL_SampleFormat_Detect):
@@ -181,6 +183,7 @@ cdef class Stream:
     def __dealloc__(self):
         if self.inst is not NULL:
             OAL_Stream_Unload(self.inst)
+            self.inst = NULL
 
     @classmethod
     def load(cls,  asFilename, eOAL_SampleFormat format=eOAL_SampleFormat_Detect):
@@ -324,6 +327,198 @@ cdef class Source:
     def set_aux_send_filter_gain_hf_auto(self, bool auto):
         OAL_Source_SetAuxSendFilterGainHFAuto(self.handle, auto)
 
+    def set_direct_filter(self, Filter filter):
+        if filter is not None:
+            OAL_Source_SetDirectFilter(self.handle, filter.filter)
+        else:
+            OAL_Source_SetDirectFilter(self.handle, NULL)
+
+    def set_aux_send(self, int send, EffectSlot slot, Filter filter=None):
+        OAL_Source_SetAuxSend(self.handle, send, slot.slot if slot is not None else -1, filter.filter if filter is not None else NULL)
+
+    def set_aux_send_slot(self, int send, EffectSlot slot):
+        OAL_Source_SetAuxSendSlot(self.handle, send, slot.slot if slot is not None else -1)
+
+    def set_aux_send_filter(self, int send, Filter filter):
+        OAL_Source_SetAuxSendFilter(self.handle, send, filter.filter if filter is not None else NULL)
+
+
+cdef class Filter:
+    cdef cOAL_Filter* filter
+    def __cinit__(self, eOALFilterType filter_type):
+        self.filter = OAL_Filter_Create()
+        if self.filter is NULL:
+            raise RuntimeError("Error creating filter")
+        OAL_Filter_SetType(self.filter, filter_type)
+
+    def __dealloc__(self):
+        if self.filter is not NULL:
+            OAL_Filter_Destroy(self.filter)
+            self.filter = NULL
+
+    property gain:
+        def __get__(self): return self.filter.GetGain()
+        def __set__(self, float gain): self.filter.SetGain(gain)
+
+    property gain_hf:
+        def __get__(self): return self.filter.GetGainHF()
+        def __set__(self, float gain_hf): self.filter.SetGainHF(gain_hf)
+
+    property gain_lf:
+        def __get__(self): return self.filter.GetGainLF()
+        def __set__(self, float gain_lf): self.filter.SetGainLF(gain_lf)
+
+
+@cython.internal
+cdef class Effect:
+    cdef cOAL_Effect* inst
+
+
+cdef class ReverbEffect(Effect):
+    def __cinit__(self):
+        self.inst = OAL_Effect_Reverb_Create()
+        if self.inst is NULL:
+            raise RuntimeError("Error creating reverb effect")
+
+    def __dealloc__(self):
+        if self.inst is not NULL:
+            OAL_Effect_Destroy(self.inst)
+            self.inst = NULL
+
+    property density:
+        def __get__(self): return (<cOAL_Effect_Reverb*>self.inst).GetDensity()
+        def __set__(self, float v): (<cOAL_Effect_Reverb*>self.inst).SetDensity(v)
+
+    property diffusion:
+        def __get__(self): return (<cOAL_Effect_Reverb*>self.inst).GetDiffusion()
+        def __set__(self, float v): (<cOAL_Effect_Reverb*>self.inst).SetDiffusion(v)
+
+    property gain:
+        def __get__(self): return (<cOAL_Effect_Reverb*>self.inst).GetGain()
+        def __set__(self, float v): (<cOAL_Effect_Reverb*>self.inst).SetGain(v)
+
+    property gain_hf:
+        def __get__(self): return (<cOAL_Effect_Reverb*>self.inst).GetGainHF()
+        def __set__(self, float v): (<cOAL_Effect_Reverb*>self.inst).SetGainHF(v)
+
+    property gain_lf:
+        def __get__(self): return (<cOAL_Effect_Reverb*>self.inst).GetGainLF()
+        def __set__(self, float v): (<cOAL_Effect_Reverb*>self.inst).SetGainLF(v)
+
+    property decay_time:
+        def __get__(self): return (<cOAL_Effect_Reverb*>self.inst).GetDecayTime()
+        def __set__(self, float v): (<cOAL_Effect_Reverb*>self.inst).SetDecayTime(v)
+
+    property decay_hf_ratio:
+        def __get__(self): return (<cOAL_Effect_Reverb*>self.inst).GetDecayHFRatio()
+        def __set__(self, float v): (<cOAL_Effect_Reverb*>self.inst).SetDecayHFRatio(v)
+
+    property decay_lf_ratio:
+        def __get__(self): return (<cOAL_Effect_Reverb*>self.inst).GetDecayLFRatio()
+        def __set__(self, float v): (<cOAL_Effect_Reverb*>self.inst).SetDecayLFRatio(v)
+
+    property reflections_gain:
+        def __get__(self): return (<cOAL_Effect_Reverb*>self.inst).GetReflectionsGain()
+        def __set__(self, float v): (<cOAL_Effect_Reverb*>self.inst).SetReflectionsGain(v)
+
+    property reflections_delay:
+        def __get__(self): return (<cOAL_Effect_Reverb*>self.inst).GetReflectionsDelay()
+        def __set__(self, float v): (<cOAL_Effect_Reverb*>self.inst).SetReflectionsDelay(v)
+
+    property reflections_pan:
+        def __get__(self):
+            cdef float* pan = (<cOAL_Effect_Reverb*>self.inst).GetReflectionsPan()
+            return pan[0], pan[1], pan[2]
+        def __set__(self, v):
+            cdef float[3] pan
+            pan[0], pan[1], pan[2] = v
+            (<cOAL_Effect_Reverb*>self.inst).SetReflectionsPan(pan)
+
+    property late_reverb_gain:
+        def __get__(self): return (<cOAL_Effect_Reverb*>self.inst).GetLateReverbGain()
+        def __set__(self, float v): (<cOAL_Effect_Reverb*>self.inst).SetLateReverbGain(v)
+
+    property late_reverb_delay:
+        def __get__(self): return (<cOAL_Effect_Reverb*>self.inst).GetLateReverbDelay()
+        def __set__(self, float v): (<cOAL_Effect_Reverb*>self.inst).SetLateReverbDelay(v)
+
+    property late_reverb_pan:
+        def __get__(self):
+            cdef float* pan = (<cOAL_Effect_Reverb*>self.inst).GetLateReverbPan()
+            return pan[0], pan[1], pan[2]
+        def __set__(self, v):
+            cdef float[3] pan
+            pan[0], pan[1], pan[2] = v
+            (<cOAL_Effect_Reverb*>self.inst).SetLateReverbPan(pan)
+
+    property echo_time:
+        def __get__(self): return (<cOAL_Effect_Reverb*>self.inst).GetEchoTime()
+        def __set__(self, float v): (<cOAL_Effect_Reverb*>self.inst).SetEchoTime(v)
+
+    property echo_depth:
+        def __get__(self): return (<cOAL_Effect_Reverb*>self.inst).GetEchoDepth()
+        def __set__(self, float v): (<cOAL_Effect_Reverb*>self.inst).SetEchoDepth(v)
+
+    property modulation_time:
+        def __get__(self): return (<cOAL_Effect_Reverb*>self.inst).GetModulationTime()
+        def __set__(self, float v): (<cOAL_Effect_Reverb*>self.inst).SetModulationTime(v)
+
+    property modulation_depth:
+        def __get__(self): return (<cOAL_Effect_Reverb*>self.inst).GetModulationDepth()
+        def __set__(self, float v): (<cOAL_Effect_Reverb*>self.inst).SetModulationDepth(v)
+
+    property air_absorption_gain_hf:
+        def __get__(self): return (<cOAL_Effect_Reverb*>self.inst).GetAirAbsorptionGainHF()
+        def __set__(self, float v): (<cOAL_Effect_Reverb*>self.inst).SetAirAbsorptionGainHF(v)
+
+    property hf_reference:
+        def __get__(self): return (<cOAL_Effect_Reverb*>self.inst).GetHFReference()
+        def __set__(self, float v): (<cOAL_Effect_Reverb*>self.inst).SetHFReference(v)
+
+    property lf_reference:
+        def __get__(self): return (<cOAL_Effect_Reverb*>self.inst).GetLFReference()
+        def __set__(self, float v): (<cOAL_Effect_Reverb*>self.inst).SetLFReference(v)
+
+    property room_rolloff_factor:
+        def __get__(self): return (<cOAL_Effect_Reverb*>self.inst).GetRoomRolloffFactor()
+        def __set__(self, float v): (<cOAL_Effect_Reverb*>self.inst).SetRoomRolloffFactor(v)
+
+    property decay_hf_limit:
+        def __get__(self): return (<cOAL_Effect_Reverb*>self.inst).GetDecayHFLimit()
+        def __set__(self, bool v): (<cOAL_Effect_Reverb*>self.inst).SetDecayHFLimit(v)
+
+
+cdef class EffectSlot:
+    cdef int slot
+    def __cinit__(self, effect_or_slot_num):
+        if isinstance(effect_or_slot_num, Effect):
+            self.slot = OAL_UseEffect((<Effect>effect_or_slot_num).inst)
+            if self.slot == -1:
+                raise RuntimeError("Can not create effect slot from effect")
+        elif isinstance(effect_or_slot_num, int):
+            self.slot = effect_or_slot_num
+        else:
+            raise ValueError("Argument should be either effect or int")
+
+    def set_gain(self, float gain):
+        OAL_EffectSlot_SetGain(self.slot, gain)
+
+    def set_autoadjust(self, bool auto):
+        OAL_EffectSlot_SetAutoAdjust(self.slot, auto)
+
+    def attach_effect(self, Effect effect):
+        if effect is not None:
+            return OAL_EffectSlot_AttachEffect(self.slot, effect.inst)
+        else:
+            return OAL_EffectSlot_AttachEffect(self.slot, NULL)
+
+    def __dealloc__(self):
+        if self.slot != -1:
+            OAL_EffectSlot_AttachEffect(self.slot, NULL)
+
+
+def update_effect_slots():
+    OAL_UpdateEffectSlots()
 
 def set_listener_gain(float gain):
     if gpDevice is not NULL:

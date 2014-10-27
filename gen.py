@@ -23,6 +23,12 @@ method_template = """
         {% if return_type != 'void' %}return {% endif %}{{orig_name}}(self.{{instance_field}}{% if arg_names %}, {{arg_names}}{% endif %})
 """
 
+props_get_set_template ="""
+    property {{name}}:
+        def __get__(self): return (<{{type}}>self.{{instance_field}}).Get{{orig_name}}()
+        def __set__(self, {{orig_type}} v): (<{{type}}>self.{{instance_field}}).Set{{orig_name}}(v)
+"""
+
 def list_contains(list, sublist):
     for i in xrange(len(list)-len(sublist)+1):
         if sublist == list[i:i+len(sublist)]:
@@ -85,18 +91,31 @@ def parse_func_def(s):
     return l
 
 inp = """
-    void OAL_Source_SetConeOuterGain ( const int alSource, const float afGain )
-    void OAL_Source_setConeInnerAngle ( const int alSource, const float afAngle )
-    void OAL_Source_setConeOuterAngle ( const int alSource, const float afAngle )
-    void OAL_Source_SetDirection ( const int alSource, const float* apDir )
-    void OAL_Source_SetConeOuterGainHF ( const int alSourceHandle, const float afGain )
-    void OAL_Source_SetAirAbsorptionFactor ( const int alSourceHandle, const float afFactor )
-    void OAL_Source_SetRoomRolloffFactor ( const int alSourceHandle, const float afFactor )
-    void OAL_Source_SetDirectFilterGainHFAuto ( const int alSourceHandle, bool abAuto)
-    void OAL_Source_SetAuxSendFilterGainAuto ( const int alSourceHandle, bool abAuto)
-    void OAL_Source_SetAuxSendFilterGainHFAuto ( const int alSourceHandle, bool abAuto)
+	float mfDensity;
+	float mfDiffusion;
+    float mfGain;
+	float mfGainHF;
+	float mfGainLF;
+    float mfDecayTime;
+	float mfDecayHFRatio;
+	float mfDecayLFRatio;
+	float mfReflectionsGain;
+	float mfReflectionsDelay;
+	float mfReflectionsPan[3];
+	float mfLateReverbGain;
+	float mfLateReverbDelay;
+	float mfLateReverbPan[3];
+	float mfEchoTime;
+	float mfEchoDepth;
+	float mfModulationTime;
+	float mfModulationDepth;
+	float mfAirAbsorptionGainHF;
+	float mfHFReference;
+	float mfLFReference;
+	float mfRoomRolloffFactor;
+	bool mbDecayHFLimit;
 """
-known_abbrews = ('EFX', 'OAL')
+known_abbrews = ('EFX', 'OAL', 'LF', 'HF')
 
 def gen_properties(inpp):
     t = Template(props_template)
@@ -106,6 +125,19 @@ def gen_properties(inpp):
             'orig_name': orig_name,
             'orig_type': orig_type,
             'instance_field': 'params',
+        }
+        print t.render(ctx)
+
+def gen_set_get_properties(inpp):
+    t = Template(props_get_set_template)
+    for (orig_type, orig_name) in parse_var_def(inp):
+        name = orig_name[2:]
+        ctx = {
+            'name': pythonize_name(name, []),
+            'orig_name': name,
+            'type': 'cOAL_Effect_Reverb*',
+            'orig_type': orig_type,
+            'instance_field': 'inst',
         }
         print t.render(ctx)
 
@@ -141,4 +173,4 @@ def gen_methods(inp):
         print t.render(ctx)
 
 if __name__ == '__main__':
-    gen_methods(inp)
+    gen_set_get_properties(inp)
