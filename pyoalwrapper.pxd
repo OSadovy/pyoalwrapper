@@ -276,3 +276,4 @@ cdef extern from "OALWrapper/OAL_EFX.h":
     void OAL_Source_SetFilterType( int alSourceHandle, eOALFilterType aeType)
     void OAL_Source_SetFilterGain( int alSourceHandle, float afGain)
     void OAL_Source_SetFilterGainHF( int alSourceHandle, float afGainHF)
+

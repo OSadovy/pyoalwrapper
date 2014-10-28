@@ -12,7 +12,7 @@ AUTOWRAP_PATH = r'c:\python27\lib\site-packages\autowrap\data_files'
 j = os.path.join
 
 oalwrapper_ext = Extension("pyoalwrapper", ["pyoalwrapper.pyx"],
-include_dirs  = [j(OALWRAPPER_PATH, 'include'), AUTOWRAP_PATH],
+include_dirs  = [j(OALWRAPPER_PATH, 'include'), j(OPENAL_PATH, 'include'), AUTOWRAP_PATH],
 libraries = ['OALWrapper', 'openal32', 'sdl2', 'ogg', 'vorbis', 'Shell32'],
 library_dirs =[j(OALWRAPPER_PATH, 'Release'), j(OPENAL_PATH, 'lib'), SDL2_PATH, OGG_PATH, VORBIS_PATH],
 language="c++",

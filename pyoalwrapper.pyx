@@ -2,6 +2,7 @@
 
 cimport cython
 from pyoalwrapper cimport *
+cimport efxpresets
 
 
 cdef extern from "helper.h":
@@ -486,6 +487,261 @@ cdef class ReverbEffect(Effect):
     property decay_hf_limit:
         def __get__(self): return (<cOAL_Effect_Reverb*>self.inst).GetDecayHFLimit()
         def __set__(self, bool v): (<cOAL_Effect_Reverb*>self.inst).SetDecayHFLimit(v)
+
+    cdef apply_preset(self, efxpresets.EFXEAXREVERBPROPERTIES props):
+        (<cOAL_Effect_Reverb*>self.inst).SetDensity(props.flDensity)
+        (<cOAL_Effect_Reverb*>self.inst).SetDiffusion(props.flDiffusion)
+        (<cOAL_Effect_Reverb*>self.inst).SetGain(props.flGain)
+        (<cOAL_Effect_Reverb*>self.inst).SetGainHF(props.flGainHF)
+        (<cOAL_Effect_Reverb*>self.inst).SetGainLF(props.flGainLF)
+        (<cOAL_Effect_Reverb*>self.inst).SetDecayTime(props.flDecayTime)
+        (<cOAL_Effect_Reverb*>self.inst).SetDecayHFRatio(props.flDecayHFRatio)
+        (<cOAL_Effect_Reverb*>self.inst).SetDecayLFRatio(props.flDecayLFRatio)
+        (<cOAL_Effect_Reverb*>self.inst).SetReflectionsGain(props.flReflectionsGain)
+        (<cOAL_Effect_Reverb*>self.inst).SetReflectionsDelay(props.flReflectionsDelay)
+        (<cOAL_Effect_Reverb*>self.inst).SetReflectionsPan(props.flReflectionsPan)
+        (<cOAL_Effect_Reverb*>self.inst).SetLateReverbGain(props.flLateReverbGain)
+        (<cOAL_Effect_Reverb*>self.inst).SetLateReverbDelay(props.flLateReverbDelay)
+        (<cOAL_Effect_Reverb*>self.inst).SetLateReverbPan(props.flLateReverbPan)
+        (<cOAL_Effect_Reverb*>self.inst).SetEchoTime(props.flEchoTime)
+        (<cOAL_Effect_Reverb*>self.inst).SetEchoDepth(props.flEchoDepth)
+        (<cOAL_Effect_Reverb*>self.inst).SetModulationTime(props.flModulationTime)
+        (<cOAL_Effect_Reverb*>self.inst).SetModulationDepth(props.flModulationDepth)
+        (<cOAL_Effect_Reverb*>self.inst).SetAirAbsorptionGainHF(props.flAirAbsorptionGainHF)
+        (<cOAL_Effect_Reverb*>self.inst).SetHFReference(props.flHFReference)
+        (<cOAL_Effect_Reverb*>self.inst).SetLFReference(props.flLFReference)
+        (<cOAL_Effect_Reverb*>self.inst).SetRoomRolloffFactor(props.flRoomRolloffFactor)
+        (<cOAL_Effect_Reverb*>self.inst).SetDecayHFLimit(props.iDecayHFLimit)
+
+    def load_preset(self, str preset):
+        if preset == 'GENERIC':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_GENERIC())
+        elif preset == 'PADDEDCELL':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_PADDEDCELL())
+        elif preset == 'ROOM':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_ROOM())
+        elif preset == 'BATHROOM':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_BATHROOM())
+        elif preset == 'LIVINGROOM':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_LIVINGROOM())
+        elif preset == 'STONEROOM':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_STONEROOM())
+        elif preset == 'AUDITORIUM':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_AUDITORIUM())
+        elif preset == 'CONCERTHALL':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_CONCERTHALL())
+        elif preset == 'CAVE':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_CAVE())
+        elif preset == 'ARENA':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_ARENA())
+        elif preset == 'HANGAR':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_HANGAR())
+        elif preset == 'CARPETEDHALLWAY':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_CARPETEDHALLWAY())
+        elif preset == 'HALLWAY':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_HALLWAY())
+        elif preset == 'STONECORRIDOR':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_STONECORRIDOR())
+        elif preset == 'ALLEY':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_ALLEY())
+        elif preset == 'FOREST':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_FOREST())
+        elif preset == 'CITY':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_CITY())
+        elif preset == 'MOUNTAINS':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_MOUNTAINS())
+        elif preset == 'QUARRY':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_QUARRY())
+        elif preset == 'PLAIN':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_PLAIN())
+        elif preset == 'PARKINGLOT':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_PARKINGLOT())
+        elif preset == 'SEWERPIPE':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_SEWERPIPE())
+        elif preset == 'UNDERWATER':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_UNDERWATER())
+        elif preset == 'DRUGGED':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_DRUGGED())
+        elif preset == 'DIZZY':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_DIZZY())
+        elif preset == 'PSYCHOTIC':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_PSYCHOTIC())
+        elif preset == 'CASTLE_SMALLROOM':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_CASTLE_SMALLROOM())
+        elif preset == 'CASTLE_SHORTPASSAGE':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_CASTLE_SHORTPASSAGE())
+        elif preset == 'CASTLE_MEDIUMROOM':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_CASTLE_MEDIUMROOM())
+        elif preset == 'CASTLE_LARGEROOM':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_CASTLE_LARGEROOM())
+        elif preset == 'CASTLE_LONGPASSAGE':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_CASTLE_LONGPASSAGE())
+        elif preset == 'CASTLE_HALL':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_CASTLE_HALL())
+        elif preset == 'CASTLE_CUPBOARD':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_CASTLE_CUPBOARD())
+        elif preset == 'CASTLE_COURTYARD':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_CASTLE_COURTYARD())
+        elif preset == 'CASTLE_ALCOVE':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_CASTLE_ALCOVE())
+        elif preset == 'FACTORY_SMALLROOM':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_FACTORY_SMALLROOM())
+        elif preset == 'FACTORY_SHORTPASSAGE':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_FACTORY_SHORTPASSAGE())
+        elif preset == 'FACTORY_MEDIUMROOM':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_FACTORY_MEDIUMROOM())
+        elif preset == 'FACTORY_LARGEROOM':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_FACTORY_LARGEROOM())
+        elif preset == 'FACTORY_LONGPASSAGE':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_FACTORY_LONGPASSAGE())
+        elif preset == 'FACTORY_HALL':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_FACTORY_HALL())
+        elif preset == 'FACTORY_CUPBOARD':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_FACTORY_CUPBOARD())
+        elif preset == 'FACTORY_COURTYARD':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_FACTORY_COURTYARD())
+        elif preset == 'FACTORY_ALCOVE':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_FACTORY_ALCOVE())
+        elif preset == 'ICEPALACE_SMALLROOM':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_ICEPALACE_SMALLROOM())
+        elif preset == 'ICEPALACE_SHORTPASSAGE':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_ICEPALACE_SHORTPASSAGE())
+        elif preset == 'ICEPALACE_MEDIUMROOM':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_ICEPALACE_MEDIUMROOM())
+        elif preset == 'ICEPALACE_LARGEROOM':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_ICEPALACE_LARGEROOM())
+        elif preset == 'ICEPALACE_LONGPASSAGE':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_ICEPALACE_LONGPASSAGE())
+        elif preset == 'ICEPALACE_HALL':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_ICEPALACE_HALL())
+        elif preset == 'ICEPALACE_CUPBOARD':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_ICEPALACE_CUPBOARD())
+        elif preset == 'ICEPALACE_COURTYARD':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_ICEPALACE_COURTYARD())
+        elif preset == 'ICEPALACE_ALCOVE':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_ICEPALACE_ALCOVE())
+        elif preset == 'SPACESTATION_SMALLROOM':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_SPACESTATION_SMALLROOM())
+        elif preset == 'SPACESTATION_SHORTPASSAGE':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_SPACESTATION_SHORTPASSAGE())
+        elif preset == 'SPACESTATION_MEDIUMROOM':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_SPACESTATION_MEDIUMROOM())
+        elif preset == 'SPACESTATION_LARGEROOM':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_SPACESTATION_LARGEROOM())
+        elif preset == 'SPACESTATION_LONGPASSAGE':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_SPACESTATION_LONGPASSAGE())
+        elif preset == 'SPACESTATION_HALL':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_SPACESTATION_HALL())
+        elif preset == 'SPACESTATION_CUPBOARD':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_SPACESTATION_CUPBOARD())
+        elif preset == 'SPACESTATION_ALCOVE':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_SPACESTATION_ALCOVE())
+        elif preset == 'WOODEN_SMALLROOM':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_WOODEN_SMALLROOM())
+        elif preset == 'WOODEN_SHORTPASSAGE':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_WOODEN_SHORTPASSAGE())
+        elif preset == 'WOODEN_MEDIUMROOM':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_WOODEN_MEDIUMROOM())
+        elif preset == 'WOODEN_LARGEROOM':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_WOODEN_LARGEROOM())
+        elif preset == 'WOODEN_LONGPASSAGE':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_WOODEN_LONGPASSAGE())
+        elif preset == 'WOODEN_HALL':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_WOODEN_HALL())
+        elif preset == 'WOODEN_CUPBOARD':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_WOODEN_CUPBOARD())
+        elif preset == 'WOODEN_COURTYARD':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_WOODEN_COURTYARD())
+        elif preset == 'WOODEN_ALCOVE':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_WOODEN_ALCOVE())
+        elif preset == 'SPORT_EMPTYSTADIUM':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_SPORT_EMPTYSTADIUM())
+        elif preset == 'SPORT_SQUASHCOURT':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_SPORT_SQUASHCOURT())
+        elif preset == 'SPORT_SMALLSWIMMINGPOOL':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_SPORT_SMALLSWIMMINGPOOL())
+        elif preset == 'SPORT_LARGESWIMMINGPOOL':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_SPORT_LARGESWIMMINGPOOL())
+        elif preset == 'SPORT_GYMNASIUM':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_SPORT_GYMNASIUM())
+        elif preset == 'SPORT_FULLSTADIUM':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_SPORT_FULLSTADIUM())
+        elif preset == 'SPORT_STADIUMTANNOY':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_SPORT_STADIUMTANNOY())
+        elif preset == 'PREFAB_WORKSHOP':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_PREFAB_WORKSHOP())
+        elif preset == 'PREFAB_SCHOOLROOM':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_PREFAB_SCHOOLROOM())
+        elif preset == 'PREFAB_PRACTISEROOM':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_PREFAB_PRACTISEROOM())
+        elif preset == 'PREFAB_OUTHOUSE':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_PREFAB_OUTHOUSE())
+        elif preset == 'PREFAB_CARAVAN':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_PREFAB_CARAVAN())
+        elif preset == 'DOME_TOMB':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_DOME_TOMB())
+        elif preset == 'PIPE_SMALL':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_PIPE_SMALL())
+        elif preset == 'DOME_SAINTPAULS':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_DOME_SAINTPAULS())
+        elif preset == 'PIPE_LONGTHIN':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_PIPE_LONGTHIN())
+        elif preset == 'PIPE_LARGE':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_PIPE_LARGE())
+        elif preset == 'PIPE_RESONANT':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_PIPE_RESONANT())
+        elif preset == 'OUTDOORS_BACKYARD':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_OUTDOORS_BACKYARD())
+        elif preset == 'OUTDOORS_ROLLINGPLAINS':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_OUTDOORS_ROLLINGPLAINS())
+        elif preset == 'OUTDOORS_DEEPCANYON':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_OUTDOORS_DEEPCANYON())
+        elif preset == 'OUTDOORS_CREEK':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_OUTDOORS_CREEK())
+        elif preset == 'OUTDOORS_VALLEY':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_OUTDOORS_VALLEY())
+        elif preset == 'MOOD_HEAVEN':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_MOOD_HEAVEN())
+        elif preset == 'MOOD_HELL':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_MOOD_HELL())
+        elif preset == 'MOOD_MEMORY':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_MOOD_MEMORY())
+        elif preset == 'DRIVING_COMMENTATOR':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_DRIVING_COMMENTATOR())
+        elif preset == 'DRIVING_PITGARAGE':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_DRIVING_PITGARAGE())
+        elif preset == 'DRIVING_INCAR_RACER':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_DRIVING_INCAR_RACER())
+        elif preset == 'DRIVING_INCAR_SPORTS':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_DRIVING_INCAR_SPORTS())
+        elif preset == 'DRIVING_INCAR_LUXURY':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_DRIVING_INCAR_LUXURY())
+        elif preset == 'DRIVING_FULLGRANDSTAND':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_DRIVING_FULLGRANDSTAND())
+        elif preset == 'DRIVING_EMPTYGRANDSTAND':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_DRIVING_EMPTYGRANDSTAND())
+        elif preset == 'DRIVING_TUNNEL':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_DRIVING_TUNNEL())
+        elif preset == 'CITY_STREETS':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_CITY_STREETS())
+        elif preset == 'CITY_SUBWAY':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_CITY_SUBWAY())
+        elif preset == 'CITY_MUSEUM':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_CITY_MUSEUM())
+        elif preset == 'CITY_LIBRARY':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_CITY_LIBRARY())
+        elif preset == 'CITY_UNDERPASS':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_CITY_UNDERPASS())
+        elif preset == 'CITY_ABANDONED':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_CITY_ABANDONED())
+        elif preset == 'DUSTYROOM':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_DUSTYROOM())
+        elif preset == 'CHAPEL':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_CHAPEL())
+        elif preset == 'SMALLWATERROOM':
+            self.apply_preset(efxpresets.get_EFX_REVERB_PRESET_SMALLWATERROOM())
+        else:
+            raise ValueError("Argument should be either effect or int")
 
 
 cdef class EffectSlot:

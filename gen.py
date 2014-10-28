@@ -29,6 +29,8 @@ props_get_set_template ="""
         def __set__(self, {{orig_type}} v): (<{{type}}>self.{{instance_field}}).Set{{orig_name}}(v)
 """
 
+efx_inlines = """inline EFXEAXREVERBPROPERTIES get_{{macro}}() { EFXEAXREVERBPROPERTIES r = {{macro}}; return r; }"""
+
 def list_contains(list, sublist):
     for i in xrange(len(list)-len(sublist)+1):
         if sublist == list[i:i+len(sublist)]:
@@ -91,29 +93,29 @@ def parse_func_def(s):
     return l
 
 inp = """
-	float mfDensity;
-	float mfDiffusion;
-    float mfGain;
-	float mfGainHF;
-	float mfGainLF;
-    float mfDecayTime;
-	float mfDecayHFRatio;
-	float mfDecayLFRatio;
-	float mfReflectionsGain;
-	float mfReflectionsDelay;
-	float mfReflectionsPan[3];
-	float mfLateReverbGain;
-	float mfLateReverbDelay;
-	float mfLateReverbPan[3];
-	float mfEchoTime;
-	float mfEchoDepth;
-	float mfModulationTime;
-	float mfModulationDepth;
-	float mfAirAbsorptionGainHF;
-	float mfHFReference;
-	float mfLFReference;
-	float mfRoomRolloffFactor;
-	bool mbDecayHFLimit;
+    float flDensity;
+    float flDiffusion;
+    float flGain;
+    float flGainHF;
+    float flGainLF;
+    float flDecayTime;
+    float flDecayHFRatio;
+    float flDecayLFRatio;
+    float flReflectionsGain;
+    float flReflectionsDelay;
+    float flReflectionsPan[3];
+    float flLateReverbGain;
+    float flLateReverbDelay;
+    float flLateReverbPan[3];
+    float flEchoTime;
+    float flEchoDepth;
+    float flModulationTime;
+    float flModulationDepth;
+    float flAirAbsorptionGainHF;
+    float flHFReference;
+    float flLFReference;
+    float flRoomRolloffFactor;
+    int   iDecayHFLimit;
 """
 known_abbrews = ('EFX', 'OAL', 'LF', 'HF')
 
@@ -172,5 +174,19 @@ def gen_methods(inp):
         }
         print t.render(ctx)
 
+def gen_efx_inlines(inp):
+    t = Template(efx_inlines)
+    for m in inp.split('\n'):
+        m = m.strip()
+        if not m:
+            continue
+        print t.render({
+            'macro': m
+        })
+def gen_set_efx(inpp):
+    for (orig_type, orig_name) in parse_var_def(inp):
+        name = orig_name[2:]
+        print "        (<cOAL_Effect_Reverb*>self.inst).Set%s(props.%s)" % (name, orig_name)
+
 if __name__ == '__main__':
-    gen_set_get_properties(inp)
+    gen_set_efx(inp)
